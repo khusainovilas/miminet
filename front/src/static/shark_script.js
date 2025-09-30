@@ -115,10 +115,10 @@ function decode_ethernet_header (eth_hdr) {
 	}
 
 	return {
-		"Destination:" : eth_hdr.slice(0,6).join(":"),
-		"Source:" : eth_hdr.slice(6,12).join(":"),
-		"Type/Length:" : eth_type_length_string,
-	};
+        "Destination:": { value: eth_hdr.slice(0, 6).join(":"), offset: 0, length: 6 },
+        "Source:": { value: eth_hdr.slice(6, 12).join(":"), offset: 6, length: 6 },
+        "Type/Length:": { value: eth_type_length_string, offset: 12, length: 2 }
+    };
 }
 
 function decode_llc_header (llc_hdr) {
@@ -137,10 +137,10 @@ function decode_llc_header (llc_hdr) {
 	}
 
 	return {
-		"DSAP:" : dsap_string,
-		"SSAP:" : ssap_string,
-		"Control field:" : llc_hdr.slice(2,3).join("")
-	};
+        "DSAP:": { value: dsap_string, offset: 0, length: 1 },
+        "SSAP:": { value: ssap_string, offset: 1, length: 1 },
+        "Control field:": { value: llc_hdr.slice(2, 3).join(""), offset: 2, length: 1 }
+    };
 }
 
 function decode_stp_header (stp_hdr) {
@@ -177,19 +177,19 @@ function decode_stp_header (stp_hdr) {
 	bridge_identifier_string = bridge_identifier_string + " / " + stp_hdr.slice(19,25).join(":");
 
 	return {
-		"Protocol Identifier:" : protocol_id_string,
-		"Protocol Version Identifier:" : "Spanning Tree (" + parseInt(stp_hdr.slice(2,3).join(""), 16).toString() + ")",
-		"BPDU Type:" : bpdu_type_string,
-		"BPDU flags:" : bpdu_flags_string,
-		"Root Identifier:" : root_identifier_string,
-		"Root Path Cost:" : parseInt(stp_hdr.slice(13, 17).join(""), 16).toString(),
-		"Bridge Identifier:" : bridge_identifier_string,
-		"Port identifier:" : "0x" + stp_hdr.slice(25, 27).join(""),
-		"Message Age:" : (parseInt(stp_hdr.slice(27,29).join(""), 16)/256).toString(),
-		"Max Age:" : (parseInt(stp_hdr.slice(29,31).join(""), 16)/256).toString(),
-		"Hello Time:" : (parseInt(stp_hdr.slice(31,33).join(""), 16)/256).toString(),
-		"Forward Delay:" : (parseInt(stp_hdr.slice(33,35).join(""), 16)/256).toString(),
-	};
+        "Protocol Identifier:": { value: protocol_id_string, offset: 0, length: 2 },
+        "Protocol Version Identifier:": { value: "Spanning Tree (" + parseInt(stp_hdr.slice(2, 3).join(""), 16).toString() + ")", offset: 2, length: 1 },
+        "BPDU Type:": { value: bpdu_type_string, offset: 3, length: 1 },
+        "BPDU flags:": { value: bpdu_flags_string, offset: 4, length: 1 },
+        "Root Identifier:": { value: root_identifier_string, offset: 5, length: 8 },
+        "Root Path Cost:": { value: parseInt(stp_hdr.slice(13, 17).join(""), 16).toString(), offset: 13, length: 4 },
+        "Bridge Identifier:": { value: bridge_identifier_string, offset: 17, length: 8 },
+        "Port identifier:": { value: "0x" + stp_hdr.slice(25, 27).join(""), offset: 25, length: 2 },
+        "Message Age:": { value: (parseInt(stp_hdr.slice(27, 29).join(""), 16) / 256).toString(), offset: 27, length: 2 },
+        "Max Age:": { value: (parseInt(stp_hdr.slice(29, 31).join(""), 16) / 256).toString(), offset: 29, length: 2 },
+        "Hello Time:": { value: (parseInt(stp_hdr.slice(31, 33).join(""), 16) / 256).toString(), offset: 31, length: 2 },
+        "Forward Delay:": { value: (parseInt(stp_hdr.slice(33, 35).join(""), 16) / 256).toString(), offset: 33, length: 2 }
+    };
 }
 
 function decode_arp_header (arp_hdr) {
@@ -222,16 +222,16 @@ function decode_arp_header (arp_hdr) {
 
 
 	return {
-		"Hardware type:" : hw_type_string,
-		"Protocol type:" : proto_type_string,
-		"Hardware size:" : arp_hdr.slice(4,5).toString(),
-		"Protocol size:" : arp_hdr.slice(5,6).toString(),
-		"Opcode:" : opcode_string,
-		"Sender MAC address:" : arp_hdr.slice(8,14).join(":"),
-		"Sender IP address:" : hex_to_ip(arp_hdr.slice(14, 18)),
-		"Target MAC address:" : arp_hdr.slice(18, 24).join(":"),
-		"Target IP address:" : hex_to_ip(arp_hdr.slice(24, 28)),
-	};
+        "Hardware type:": { value: hw_type_string, offset: 0, length: 2 },
+        "Protocol type:": { value: proto_type_string, offset: 2, length: 2 },
+        "Hardware size:": { value: arp_hdr.slice(4, 5).toString(), offset: 4, length: 1 },
+        "Protocol size:": { value: arp_hdr.slice(5, 6).toString(), offset: 5, length: 1 },
+        "Opcode:": { value: opcode_string, offset: 6, length: 2 },
+        "Sender MAC address:": { value: arp_hdr.slice(8, 14).join(":"), offset: 8, length: 6 },
+        "Sender IP address:": { value: hex_to_ip(arp_hdr.slice(14, 18)), offset: 14, length: 4 },
+        "Target MAC address:": { value: arp_hdr.slice(18, 24).join(":"), offset: 18, length: 6 },
+        "Target IP address:": { value: hex_to_ip(arp_hdr.slice(24, 28)), offset: 24, length: 4 }
+    };
 }
 
 function decode_ip_header (ip_hdr) {
@@ -272,19 +272,19 @@ function decode_ip_header (ip_hdr) {
 	}
 	
 	return {
-		"xxxx .... = " : ip_ver_string,
-		".... xxxx = " : ip_hdr_len_string,
-		"Differentiated Service Field:" : ip_hdr.slice(1,2).toString(),
-		"Total Length:" : parseInt(ip_hdr.slice(2, 4).join(""), 16).toString(),
-		"Identification:" : "0x" + ip_hdr.slice(4, 6).join(""),
-		"Flag and Fragment Offset:" : ip_hdr.slice(6, 8).join(""),
-		"...x xxxx xxxx xxxx = Fragment Offset:" : (ip_flag_and_offset & 8191) * 8,
-		"Time to Live:" : parseInt(ip_hdr.slice(8,9), 16).toString(),
-		"Protocol:" : ip_protocol_string,
-		"Header Checksum:" : "0x" + ip_hdr.slice(10,12).join(""),
-		"Source Address:" : hex_to_ip(ip_hdr.slice(12,16)),
-		"Destination Address:" : hex_to_ip(ip_hdr.slice(16,20)),
-	};
+        "xxxx .... = ": { value: ip_ver_string, offset: 0, length: 1 },
+        ".... xxxx = ": { value: ip_hdr_len_string, offset: 0, length: 1 },
+        "Differentiated Service Field:": { value: ip_hdr.slice(1, 2).toString(), offset: 1, length: 1 },
+        "Total Length:": { value: parseInt(ip_hdr.slice(2, 4).join(""), 16).toString(), offset: 2, length: 2 },
+        "Identification:": { value: "0x" + ip_hdr.slice(4, 6).join(""), offset: 4, length: 2 },
+        "Flag and Fragment Offset:": { value: ip_hdr.slice(6, 8).join(""), offset: 6, length: 2 },
+        "...x xxxx xxxx xxxx = Fragment Offset:": { value: (ip_flag_and_offset & 8191) * 8, offset: 6, length: 2 },
+        "Time to Live:": { value: parseInt(ip_hdr.slice(8, 9).join(""), 16).toString(), offset: 8, length: 1 },
+        "Protocol:": { value: ip_protocol_string, offset: 9, length: 1 },
+        "Header Checksum:": { value: "0x" + ip_hdr.slice(10, 12).join(""), offset: 10, length: 2 },
+        "Source Address:": { value: hex_to_ip(ip_hdr.slice(12, 16)), offset: 12, length: 4 },
+        "Destination Address:": { value: hex_to_ip(ip_hdr.slice(16, 20)), offset: 16, length: 4 }
+    };
 }
 
 function decode_icmp_header (icmp_hdr) {
@@ -301,22 +301,22 @@ function decode_icmp_header (icmp_hdr) {
 		icmp_type_string = "8 (Echo (ping) request)";
 
 		return {
-			"Type:" : icmp_type_string,
-			"Code:" : icmp_hdr.slice(1,2).join(""),
-			"Checksum:" : "0x" + icmp_hdr.slice(2, 4).join(""),
-			"Identifier:" : "0x" + icmp_hdr.slice(4, 6).join(""),
-			"Sequence Number:" : "0x" + icmp_hdr.slice(6, 8).join(""),
-		};
+            "Type:": { value: icmp_type_string, offset: 0, length: 1 },
+            "Code:": { value: icmp_hdr.slice(1, 2).join(""), offset: 1, length: 1 },
+            "Checksum:": { value: "0x" + icmp_hdr.slice(2, 4).join(""), offset: 2, length: 2 },
+            "Identifier:": { value: "0x" + icmp_hdr.slice(4, 6).join(""), offset: 4, length: 2 },
+            "Sequence Number:": { value: "0x" + icmp_hdr.slice(6, 8).join(""), offset: 6, length: 2 }
+        };
 	} else if (icmp_type === "00") {
 		icmp_type_string = "0 (Echo (ping) reply)";
 
 		return {
-			"Type:" : icmp_type_string,
-			"Code:" : icmp_hdr.slice(1,2).join(""),
-			"Checksum:" : "0x" + icmp_hdr.slice(2, 4).join(""),
-			"Identifier:" : "0x" + icmp_hdr.slice(4, 6).join(""),
-			"Sequence Number:" : "0x" + icmp_hdr.slice(6, 8).join(""),
-		};
+            "Type:": { value: icmp_type_string, offset: 0, length: 1 },
+            "Code:": { value: icmp_hdr.slice(1, 2).join(""), offset: 1, length: 1 },
+            "Checksum:": { value: "0x" + icmp_hdr.slice(2, 4).join(""), offset: 2, length: 2 },
+            "Identifier:": { value: "0x" + icmp_hdr.slice(4, 6).join(""), offset: 4, length: 2 },
+            "Sequence Number:": { value: "0x" + icmp_hdr.slice(6, 8).join(""), offset: 6, length: 2 }
+        };
 	} else if (icmp_type === "03") {
 
 		let icmp_code = icmp_hdr.slice(1, 2).join("");
@@ -335,11 +335,11 @@ function decode_icmp_header (icmp_hdr) {
 		}
 
 		return {
-			"Type:" : icmp_type_string,
-			"Code:" : icmp_code_string,	
-			"Checksum:" : "0x" + icmp_hdr.slice(2, 4).join(""),
-			"Unused:" : icmp_hdr.slice(4, 8).join(""),
-		};
+            "Type:": { value: icmp_type_string, offset: 0, length: 1 },
+            "Code:": { value: icmp_code_string, offset: 1, length: 1 },
+            "Checksum:": { value: "0x" + icmp_hdr.slice(2, 4).join(""), offset: 2, length: 2 },
+            "Unused:": { value: icmp_hdr.slice(4, 8).join(""), offset: 4, length: 4 }
+        };
 	} else if (icmp_type === "05") {
 
 		let icmp_code = icmp_hdr.slice(1, 2).join("");
@@ -358,11 +358,11 @@ function decode_icmp_header (icmp_hdr) {
 		icmp_type_string = "5 (Redirect Message)";
 
 		return {
-			"Type:" : icmp_type_string,
-			"Code:" : icmp_code_string,
-			"Checksum:" : "0x" + icmp_hdr.slice(2, 4).join(""),
-			"Gateway:" : hex_to_ip(icmp_hdr.slice(4, 8)),
-		};
+            "Type:": { value: icmp_type_string, offset: 0, length: 1 },
+            "Code:": { value: icmp_code_string, offset: 1, length: 1 },
+            "Checksum:": { value: "0x" + icmp_hdr.slice(2, 4).join(""), offset: 2, length: 2 },
+            "Gateway:": { value: hex_to_ip(icmp_hdr.slice(4, 8)), offset: 4, length: 4 }
+        };
 	} else if (icmp_type === "0b") {
 
 		let icmp_code = icmp_hdr.slice(1, 2).join("");
@@ -377,11 +377,11 @@ function decode_icmp_header (icmp_hdr) {
 		icmp_type_string = "11 (Time To Live Exceeded)";
 
 		return {
-			"Type:" : icmp_type_string,
-			"Code:" : icmp_code_string,
-			"Checksum:" : "0x" + icmp_hdr.slice(2, 4).join(""),
-			"Unused:" : icmp_hdr.slice(4, 8).join(""),
-		};
+            "Type:": { value: icmp_type_string, offset: 0, length: 1 },
+            "Code:": { value: icmp_code_string, offset: 1, length: 1 },
+            "Checksum:": { value: "0x" + icmp_hdr.slice(2, 4).join(""), offset: 2, length: 2 },
+            "Unused:": { value: icmp_hdr.slice(4, 8).join(""), offset: 4, length: 4 }
+        };
 	}
 
 	return {};
@@ -394,12 +394,12 @@ function decode_udp_header (udp_hdr) {
 		return {};
 	}
 
-	return {
-		"Source Port:" : parseInt(udp_hdr.slice(0,2).join(""), 16).toString(),
-		"Destination Port:" : parseInt(udp_hdr.slice(2,4).join(""), 16).toString(),	
-		"Length:" : parseInt(udp_hdr.slice(4,6).join(""), 16).toString(),
-		"Checksum:" : "0x" + udp_hdr.slice(0,2).join(""),
-	};
+return {
+        "Source Port:": { value: parseInt(udp_hdr.slice(0, 2).join(""), 16).toString(), offset: 0, length: 2 },
+        "Destination Port:": { value: parseInt(udp_hdr.slice(2, 4).join(""), 16).toString(), offset: 2, length: 2 },
+        "Length:": { value: parseInt(udp_hdr.slice(4, 6).join(""), 16).toString(), offset: 4, length: 2 },
+        "Checksum:": { value: "0x" + udp_hdr.slice(6, 8).join(""), offset: 6, length: 2 }
+    };
 }
 
 function decode_tcp_header (tcp_hdr) {
@@ -413,79 +413,77 @@ function decode_tcp_header (tcp_hdr) {
 
 
 	return {
-		"Source Port:" : parseInt(tcp_hdr.slice(0,2).join(""), 16).toString(),
-		"Destination Port:" : parseInt(tcp_hdr.slice(2,4).join(""), 16).toString(),
-		"Sequence Number:" : parseInt(tcp_hdr.slice(4,8).join(""), 16).toString(),
-		"Acknowledge Number:" : parseInt(tcp_hdr.slice(8,12).join(""), 16).toString(),
-		"xxxx .... = Header Length: " : (tcp_hdr_len * 4) + " bytes (" + tcp_hdr_len + ")",
-		"Flags:" : "0x" + tcp_hdr.slice(13, 14).join(""),
-		"Window:" : parseInt(tcp_hdr.slice(14, 16).join(""), 16).toString(),
-		"Checksum:" : "0x" + tcp_hdr.slice(16,18).join(""),
-		"Urgent Pointer:" : "0x" + tcp_hdr.slice(18,20).join(""),
-	};
+        "Source Port:": { value: parseInt(tcp_hdr.slice(0, 2).join(""), 16).toString(), offset: 0, length: 2 },
+        "Destination Port:": { value: parseInt(tcp_hdr.slice(2, 4).join(""), 16).toString(), offset: 2, length: 2 },
+        "Sequence Number:": { value: parseInt(tcp_hdr.slice(4, 8).join(""), 16).toString(), offset: 4, length: 4 },
+        "Acknowledge Number:": { value: parseInt(tcp_hdr.slice(8, 12).join(""), 16).toString(), offset: 8, length: 4 },
+        "xxxx .... = Header Length: ": { value: (tcp_hdr_len * 4) + " bytes (" + tcp_hdr_len + ")", offset: 12, length: 1 },
+        "Flags:": { value: "0x" + tcp_hdr.slice(13, 14).join(""), offset: 13, length: 1 },
+        "Window:": { value: parseInt(tcp_hdr.slice(14, 16).join(""), 16).toString(), offset: 14, length: 2 },
+        "Checksum:": { value: "0x" + tcp_hdr.slice(16, 18).join(""), offset: 16, length: 2 },
+        "Urgent Pointer:": { value: "0x" + tcp_hdr.slice(18, 20).join(""), offset: 18, length: 2 }
+    };
 }
 
-function decode_gre_header (gre_hdr) {
+function decode_gre_header(gre_hdr) {
+    // By default
+    let gre_hdr_length = 4;
 
-	// By default
-	let gre_hdr_length = 4;
+    if (gre_hdr.length < gre_hdr_length) {
+        console.log("Mimishark: GRE header is too small");
+        return {};
+    }
 
-	if (gre_hdr.length < gre_hdr_length) {
-		console.log("Mimishark: GRE header is too small");
-		return {};
-	}
+    let flags_and_version = parseInt(gre_hdr.slice(0, 2).join(""), 16);
+    const C = flags_and_version & 32768;
+    const R = flags_and_version & 16384;
+    const K = flags_and_version & 8192;
+    const S = flags_and_version & 4096;
+    const s = flags_and_version & 2048;
+    const Recur = flags_and_version & 1792;
+    const Flags = flags_and_version & 240;
+    const Version = flags_and_version & 15;
 
-	let flags_and_version = gre_hdr.slice(0,2);
-	const C = flags_and_version & 32768;
-	const R = flags_and_version & 16384;
-	const K = flags_and_version & 8192;
-	const S = flags_and_version & 4096;
-	const s = flags_and_version & 2048;
-	const Recur = flags_and_version & 1792;
-	const Flags = flags_and_version & 240;
-	const Version = flags_and_version & 15;
+    const ProtocolType = gre_hdr.slice(2, 4).join("");
 
-	const ProtocolType = gre_hdr.slice(2,4).join("");
+    let protocol_type_string = "";
 
-	let protocol_type_string = "";
+    if (ProtocolType === "0800") {
+        protocol_type_string = "IPv4 (0x0800)";
+    } else {
+        protocol_type_string = "Unknown protocol";
+    }
 
-	if (ProtocolType === "0800") {
-		protocol_type_string = "IPv4 (0x0800)";
-	} else {
-		protocol_type_string = "Unknown protocol";
-	}
+    let ret_val = {
+        "x... .... .... .... = checksum bit: ": { value: Boolean(C).toString(), offset: 0, length: 2 },
+        ".X.. .... .... .... = routing bit: ": { value: Boolean(R).toString(), offset: 0, length: 2 },
+        "..X. .... .... .... = key bit: ": { value: Boolean(K).toString(), offset: 0, length: 2 },
+        "...X .... .... .... = sequence number bit: ": { value: Boolean(S).toString(), offset: 0, length: 2 },
+        ".... X... .... .... = strict source route bit: ": { value: Boolean(s).toString(), offset: 0, length: 2 },
+        ".... .XXX .... .... = recursion control: ": { value: Recur.toString(), offset: 0, length: 2 },
+        ".... .... XXXX X... = flags: ": { value: Flags.toString(), offset: 0, length: 2 },
+        ".... .... .... .XXX = version: ": { value: Version.toString(), offset: 0, length: 2 },
+        "Protocol type: ": { value: protocol_type_string, offset: 2, length: 2 }
+    };
 
+    if (C) {
+        ret_val["Checksum"] = { value: parseInt(gre_hdr.slice(4, 6).join(""), 16).toString(), offset: 4, length: 2 };
+        ret_val["Offset"] = { value: parseInt(gre_hdr.slice(6, 8).join(""), 16).toString(), offset: 6, length: 2 };
+        gre_hdr_length += 8;
+    }
 
-	let ret_val =  {
-		"x... .... .... .... = checksum bit: " : Boolean(C).toString(),
-		".X.. .... .... .... = routing bit: " : Boolean(R).toString(),
-		"..X. .... .... .... = key bit: " : Boolean(K).toString(),
-		"...X .... .... .... = sequence number bit: " : Boolean(S).toString(),
-		".... X... .... .... = strict source route bit: " : Boolean(s).toString(),
-		".... .XXX .... .... = recursion control: " : Recur.toString(),
-		".... .... XXXX X... = flags: " : Flags.toString(),
-		".... .... .... .XXX = version: " : Version.toString(),
-		"Protocol type: " : protocol_type_string,
-	};
+    if (K) {
+        ret_val["Key"] = { value: parseInt(gre_hdr.slice(8, 12).join(""), 16).toString(), offset: 8, length: 4 };
+        gre_hdr_length += 4;
+    }
 
-	if (C) {
-		ret_val["Checksum"] = parseInt(gre_hdr.slice(4,6).join(""), 16).toString();
-		ret_val["Offset"] = parseInt(gre_hdr.slice(6,8).join(""), 16).toString();
-		gre_hdr_length += 8;
-	}
-
-	if (K) {
-		ret_val["Key"] = parseInt(gre_hdr.slice(8,12).join(""), 16).toString();
-		gre_hdr_length += 4;
-	}
-
-	if (S) {
-		ret_val["Sequence number"] = parseInt(gre_hdr.slice(12,16).join(""), 16).toString();
-		gre_hdr_length += 4;
-	}
-	
-	ret_val["GRE_header_length"] = gre_hdr_length;
-	return ret_val;
+    if (S) {
+        ret_val["Sequence number"] = { value: parseInt(gre_hdr.slice(12, 16).join(""), 16).toString(), offset: 12, length: 4 };
+        gre_hdr_length += 4;
+    }
+    
+    ret_val["GRE_header_length"] = { value: gre_hdr_length, offset: 0, length: gre_hdr_length };
+    return ret_val;
 }
 
 function add_llc_header (pkt, header_number) {
@@ -499,7 +497,7 @@ function add_llc_header (pkt, header_number) {
 
 	for (var k in pkt_decode) {
 		let decode_p = document.createElement("p");
-		decode_p.innerHTML = k + " " + pkt_decode[k];
+		decode_p.innerHTML = k + " " + pkt_decode[k].value;
 		decode_div.appendChild(decode_p);
 	}
 
@@ -517,7 +515,7 @@ function add_stp_header (pkt, header_number) {
 
 	for (var k in pkt_decode) {
 		let decode_p = document.createElement("p");
-		decode_p.innerHTML = k + " " + pkt_decode[k];
+		decode_p.innerHTML = k + " " + pkt_decode[k].value;
 		decode_div.appendChild(decode_p);
 	}
 
@@ -535,7 +533,7 @@ function add_arp_header(pkt, header_number) {
 
 	for (var k in pkt_decode) {
 		let decode_p = document.createElement("p");
-		decode_p.innerHTML = k + " " + pkt_decode[k];
+		decode_p.innerHTML = k + " " + pkt_decode[k].value;
 		decode_div.appendChild(decode_p);
 	}
 	
@@ -552,7 +550,7 @@ function add_ipv4_header (pkt, header_number) {
 
 	for (var k in pkt_decode) {
 		let decode_p = document.createElement("p");
-		decode_p.innerHTML = k + " " + pkt_decode[k];
+		decode_p.innerHTML = k + " " + pkt_decode[k].value;
 		decode_div.appendChild(decode_p);
 	}
 
@@ -570,7 +568,7 @@ function add_icmp_header (pkt, header_number) {
 
 	for (var k in pkt_decode) {
 		let decode_p = document.createElement("p");
-		decode_p.innerHTML = k + " " + pkt_decode[k];
+		decode_p.innerHTML = k + " " + pkt_decode[k].value;
 		decode_div.appendChild(decode_p);
 	}
 
@@ -588,7 +586,7 @@ function add_tcp_header (pkt, header_number) {
 
 	for (var k in pkt_decode) {
 		let decode_p = document.createElement("p");
-		decode_p.innerHTML = k + " " + pkt_decode[k];
+		decode_p.innerHTML = k + " " + pkt_decode[k].value;
 		decode_div.appendChild(decode_p);
 	}
 
@@ -606,7 +604,7 @@ function add_udp_header (pkt, header_number) {
 
 	for (var k in pkt_decode) {
 		let decode_p = document.createElement("p");
-		decode_p.innerHTML = k + " " + pkt_decode[k];
+		decode_p.innerHTML = k + " " + pkt_decode[k].value;
 		decode_div.appendChild(decode_p);
 	}
 
@@ -627,12 +625,12 @@ function add_gre_header (pkt, header_number) {
 	for (var k in pkt_decode) {
 
 		if (k === "GRE_header_length") {
-			gre_hdr_len = pkt_decode[k];
+			gre_hdr_len = pkt_decode[k].value;
 			continue;
 		}
 
 		let decode_p = document.createElement("p");
-		decode_p.innerHTML = k + " " + pkt_decode[k];
+		decode_p.innerHTML = k + " " + pkt_decode[k].value;
 		decode_div.appendChild(decode_p);
 	}
 
@@ -663,7 +661,7 @@ function decode_packet(pkt) {
 
 	for (var k in pkt_decode) {
 		let decode_p = document.createElement("p");
-		decode_p.innerHTML = k + " " + pkt_decode[k];
+		decode_p.innerHTML = k + " " + pkt_decode[k].value;
 		decode_div.appendChild(decode_p);
     	}
 
@@ -759,4 +757,3 @@ function decode_packet(pkt) {
 	
 	return 0;
 }
-
